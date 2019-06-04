@@ -11,4 +11,25 @@ package projekt.konyvtar;
  */
 public class UserInt {
     
+    public static final String URL=""; 
+    private DataBaseHandler handler;
+    private DataBaseLister lister;
+    
+    public UserInt(){
+        handler = new DataBaseHandler();
+        lister = new DataBaseLister();
+    }
+    
+    public void mainMenu(){
+        
+    }
+    
+    public void choosePath(String[] options){
+        
+    }
+    
+    public void exit(String loc){
+        
+    }
+    
 }
