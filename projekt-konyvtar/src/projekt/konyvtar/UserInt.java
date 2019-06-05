@@ -22,9 +22,10 @@ public class UserInt {
     }
     
     public void mainMenu(){
+        System.out.println("____||  Üdvözöljük a könyvtári adatbázis-kezelőben  ||____");
         do { 
             String[] ch={"Olvasók kezelése","Könyvek kezelése","Kölcsönzés","Kölcsönzési statisztikák"};
-            int q = choosePath(ch);
+            int q = choosePath(ch,"___Főmenü___");
             switch(q){
                 case 1:
                     readerMenu();
@@ -50,7 +51,7 @@ public class UserInt {
         boolean quit=false;
         do{
             String[] ch={"Új olvasó hozzáadása","Olvasó deaktiválása", "Olvasó újraaktiválása"};
-            int q=choosePath(ch);
+            int q=choosePath(ch, "___Olvasók kezelése___");
             switch(q){
                 case 1:
                     handler.addCustomer(textInput("az új olvasó nevét"));
@@ -82,7 +83,7 @@ public class UserInt {
         do{
             String[] ch={"Új könyv hozzáadása","Könyv új példányának hozzáadása"
                     ,"Könyv törlése a nyilvántartásból", "Könyv példányának selejtezése"};
-            int q=choosePath(ch);
+            int q=choosePath(ch,"___Könyvek kezelése___");
             switch(q){
                 case 1:
                     String a=textInput("a könyv írójának nevét");
@@ -116,7 +117,7 @@ public class UserInt {
         boolean quit=false;
         do{
             String[] ch={"Könyv kikölcsönzése","Könyv visszaérkezése"};
-            int q=choosePath(ch);
+            int q=choosePath(ch,"___Kölcsönzés___");
             switch(q){
                 case 1:
                     borrowItem();
@@ -225,7 +226,7 @@ public class UserInt {
             String[] ch={"Olvasónál lévő könyv","Minden olvasónál lévő könyv"
                     ,"Olvasó összes eddigi kölcsönzése","Könyv összes korábbi kölcsönzése"
                     ,"Könyv átlagos kölcsönzési ideje","A legtöbbet kölcsönzött könyv"};
-            int q=choosePath(ch);
+            int q=choosePath(ch, "___Kölcsönzési statisztikák___");
             switch(q){
                 case 1:
                     int nr1=-1;
@@ -271,11 +272,12 @@ public class UserInt {
           
     }
     
-    private int choosePath(String[] choices){
+    private int choosePath(String[] choices, String title){
         boolean correct = false;
         int k = 0;
 
         do {
+            System.out.println(title);
             for (int i = 0; i < choices.length; i++) {
                 System.out.printf("   %-7d%s%n", (i + 1), choices[i]);
             }
