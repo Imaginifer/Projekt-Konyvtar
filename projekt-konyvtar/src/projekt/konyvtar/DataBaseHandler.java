@@ -47,7 +47,7 @@ public class DataBaseHandler {
             insertBookStmt.setInt(1, bookId);
             insertBookStmt.executeUpdate();
         } catch (SQLException ex) {
-            ex.getMessage();
+            ex.printStackTrace();
         }
     }
 
@@ -104,7 +104,7 @@ public class DataBaseHandler {
             
             rentABookStmt.executeUpdate();
         } catch (SQLException ex) {
-            ex.getMessage();
+            ex.printStackTrace();
         }
     }
 
