@@ -44,7 +44,7 @@ public class DataBaseLister {
                     customerIds.add(customerId);
                 }
             } else {
-                System.out.println("Még nincs bérlő!");
+                System.out.println("Még nincs kölcsönző!");
                 return;
             }
             
@@ -68,9 +68,9 @@ public class DataBaseLister {
             String customerName;
             if (getCustomerNameResults.next()) {
                 customerName = getCustomerNameResults.getString("name");
-                System.out.println("A bérlő neve: " + customerName);
+                System.out.println("A kölcsönző neve: " + customerName);
             } else {
-                System.out.println("Nincs ilyen bérlő!");
+                System.out.println("Nincs ilyen kölcsönző!");
                 return;
             }
             
@@ -86,7 +86,7 @@ public class DataBaseLister {
             if (getActiveCustomerRentalResults.next()) {
                 while (getActiveCustomerRentalResults.next()) {
                     bookName = getActiveCustomerRentalResults.getString("title");
-                    System.out.println("Aktív bérlése:  " + bookName);
+                    System.out.println("Aktív kölcsönzés:  " + bookName);
                 }
             } else {
                 System.out.println("Nincs aktív bérlése!");
@@ -126,14 +126,14 @@ public class DataBaseLister {
             if (getBookRentalResults.next()) {
                 while (getBookRentalResults.next()) {
                     customerId = getBookRentalResults.getInt("customer_id");
-                    System.out.println("Bérlő azonosítója:  " + customerId);
+                    System.out.println("Kölcsönző azonosítója:  " + customerId);
                     rentalDate = getBookRentalResults.getInt("rantal_date");
-                    System.out.println("Bérlés kezdete: " + rentalDate);
+                    System.out.println("Kölcsönzés kezdete: " + rentalDate);
                     returnDate = getBookRentalResults.getInt("return_date");
-                    System.out.println("Bérlés vége: " + returnDate);
+                    System.out.println("Kölcsönzés vége: " + returnDate);
                 }
             } else {
-                System.out.println("Még nem bérelték ki ezt a  könyvet!");
+                System.out.println("Még nem kölcsönözték ki ezt a  könyvet!");
                 return;
             }
             
@@ -171,14 +171,14 @@ public class DataBaseLister {
             if (getBookRentalResults.next()) {
                 while (getBookRentalResults.next()) {
                     customerId = getBookRentalResults.getInt("customer_id");
-                    System.out.println("Bérlő azonosítója:  " + customerId);
+                    System.out.println("Kölcsönző azonosítója:  " + customerId);
                     rentalDate = getBookRentalResults.getInt("rantal_date");
-                    System.out.println("Bérlés kezdete: " + rentalDate);
+                    System.out.println("Kölcsönzés kezdete: " + rentalDate);
                     returnDate = getBookRentalResults.getInt("return_date");
-                    System.out.println("Bérlés vége: " + returnDate);
+                    System.out.println("Kölcsönzés vége: " + returnDate);
                 }
             } else {
-                System.out.println("Még nem bérelték ki ezt a  könyvet!");
+                System.out.println("Még nem kölcsönözték ki ezt a  könyvet!");
                 return;
             }
             
@@ -192,7 +192,7 @@ public class DataBaseLister {
     }
     
     public void printAverageRentedTimeByBookId(int BookId) {
-        
+        System.out.println("Ez a funkció jelenleg nem elérhető, menjen inkább fagyizni :) ");
     }
     
     public void printListOfRentedsByOneCustomer(int customerId) {
@@ -205,9 +205,9 @@ public class DataBaseLister {
             String customerName;
             if (getCustomerNameResults.next()) {
                 customerName = getCustomerNameResults.getString("name");
-                System.out.println("A vevő neve: " + customerName);
+                System.out.println("A kölcsönző neve: " + customerName);
             } else {
-                System.out.println("Nincs ilyen vevő!");
+                System.out.println("Nincs ilyen kölcsönző!");
                 return;
             }
             
@@ -223,10 +223,10 @@ public class DataBaseLister {
             if (getCustomerRentalResults.next()) {
                 while (getCustomerRentalResults.next()) {
                     bookName = getCustomerRentalResults.getString("title");
-                    System.out.println("Bérelt könyv neve:  " + bookName);
+                    System.out.println("Kölcsönzött könyv neve:  " + bookName);
                 }
             } else {
-                System.out.println("Még nem bérelt könyvet!");
+                System.out.println("Még nem kölcsönzött könyvet!");
                 return;
             }
             
