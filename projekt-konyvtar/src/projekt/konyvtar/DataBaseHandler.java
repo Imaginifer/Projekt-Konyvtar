@@ -95,25 +95,25 @@ public class DataBaseHandler {
         }
     }
 
-    public void rentABook(int customerId, int inventoryId, String rentalDate) {
+    public void rentABook(int customerId, int inventoryId) {
         try {
-            String rentABookSql = "insert into rental (customer_id, inventory_id, rental_date, return_date) values (?, ?, ?, null)";
+            String rentABookSql = "insert into rental (customer_id, inventory_id, rental_date, return_date) values (?, ?, now(), null)";
             PreparedStatement rentABookStmt = conn.prepareStatement(rentABookSql, PreparedStatement.RETURN_GENERATED_KEYS);
             rentABookStmt.setInt(1, customerId);
             rentABookStmt.setInt(2, inventoryId);
-            rentABookStmt.setString(3, rentalDate);
+            
             rentABookStmt.executeUpdate();
         } catch (SQLException ex) {
             ex.getMessage();
         }
     }
 
-    public void returnBook(int inventoryId, String returnDate) {
+    public void returnBook(int inventoryId) {
         try {
-            String returnBookSql = "update rental set return_date = ? where inventory_id = ?";
+            String returnBookSql = "update rental set return_date = now() where inventory_id = ?";
             PreparedStatement returnBookStmt = conn.prepareStatement(returnBookSql, PreparedStatement.RETURN_GENERATED_KEYS);
-            returnBookStmt.setString(1, returnDate);
-            returnBookStmt.setInt(2, inventoryId);
+            
+            returnBookStmt.setInt(1, inventoryId);
             returnBookStmt.executeUpdate();
         } catch (SQLException ex) {
             ex.getMessage();

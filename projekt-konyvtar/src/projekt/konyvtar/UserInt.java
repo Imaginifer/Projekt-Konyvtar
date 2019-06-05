@@ -74,16 +74,22 @@ public class UserInt {
             int q=choosePath(ch);
             switch(q){
                 case 1:
-                    //TODO
+                    String a=textInput("a könyv írójának nevét");
+                    String t=textInput("a könyv címét");
+                    handler.addBook(a, t);
                     break;
                 case 2:
-                    //TODO
+                    int nr2=-1;
+                    //könyv id keresése cím alapján
+                    handler.addItem();
                     break;
                 case 3:
-                    //TODO
+                    int nr3=-1;
+                    //könyv id keresése cím alapján
+                    handler.removeBook();
                     break;
                 case 4:
-                    //TODO
+                    scrapItem();
                     break;
                 default:
                     quit=true;
@@ -100,16 +106,98 @@ public class UserInt {
             int q=choosePath(ch);
             switch(q){
                 case 1:
-                    //TODO
+                    borrowItem();
                     break;
                 case 2:
-                    //TODO
+                    returnItem();
                     break;
                 default:
                     quit=true;
                     break;
             }
         }while(!quit);
+    }
+    
+    private void returnItem(){
+        String olv=textInput("az olvasó nevét");
+        int readerId=-1;
+        readerId=lister.findCustomerIdByCustomerName(olv);
+        if(readerId!=-1){
+            System.out.println("Ezeket a könyveket kölcsönözte ki:");
+            lister.printOneCustomerAndHisActiveRentalsByCustomerId(readerId);
+            String booktitle=textInput("a visszahozott könyv címét");
+            //kell: cím és olvasóId alapján megkapni a kölcsönzött könyv itemId-jét
+            handler.returnBook();
+        }
+    }
+    
+    private void scrapItem(){
+        String title=textInput("a selejtezzni szándékozott könyv címét");
+        List<Integer> l=new ArrayList<>();
+        l=lister.findListOfInventoryIdsByTitle(title);
+        if(!l.isEmpty()){
+            boolean correct=false;
+            int itemId=-1;
+            do{
+                System.out.println("A könyv rendelkezésre álló példányainak azonosítói:");
+                for (int i = 0; i < l.size(); i++) {
+                    System.out.print(l.get(i)+(i==l.size()-1?"":", "));
+                }
+                System.out.println("");
+                String nr=textInput("a selejtezendő példány számát");
+
+                try {
+                    itemId=Integer.parseInt(nr);
+                    if(l.contains(itemId)){
+                        correct=true;
+                    }else{
+                        System.out.println("Kérem, szereplő azonosítót adjon meg!");
+                        correct=false;
+                    }
+                } catch (NumberFormatException e) {
+                    correct=false;
+                    System.out.println("Kérem, számot adjon meg!");
+                }
+            }while(!correct);
+            handler.scrapItem(itemId);
+        }
+    }
+    private void borrowItem(){
+        String olv=textInput("az olvasó nevét");
+        int readerId=-1;
+        readerId=lister.findCustomerIdByCustomerName(olv);
+        if(readerId!=-1){
+            String title=textInput("a kölcsönözni szándékozott könyv címét");
+            List<Integer> l=new ArrayList<>();
+            l=lister.findListOfInventoryIdsByTitle(title);
+            if(!l.isEmpty()){
+                boolean correct=false;
+                int itemId=-1;
+                do{
+                    System.out.println("A könyv rendelkezésre álló példányainak azonosítói:");
+                    for (int i = 0; i < l.size(); i++) {
+                        System.out.print(l.get(i)+(i==l.size()-1?"":", "));
+                    }
+                    System.out.println("");
+                    String nr=textInput("a kívánt példány számát");
+                
+                    try {
+                        itemId=Integer.parseInt(nr);
+                        if(l.contains(itemId)){
+                            correct=true;
+                        }else{
+                            System.out.println("Kérem, szereplő azonosítót adjon meg!");
+                            correct=false;
+                        }
+                    } catch (NumberFormatException e) {
+                        correct=false;
+                        System.out.println("Kérem, számot adjon meg!");
+                    }
+                }while(!correct);
+                handler.rentABook(readerId, itemId, title);
+            }
+            
+        }
     }
     
     private void statsMenu(){
@@ -127,7 +215,7 @@ public class UserInt {
                     String nom = textInput("az olvasó nevét");
                     nr1=lister.findCustomerIdByCustomerName(nom);
                     if(nr1!=-1){
-                        lister.printListOfRentedsByOneCustomer(nr1);
+                        lister.printOneCustomerAndHisActiveRentalsByCustomerId(nr1);
                     }
                     break;
                 case 2:
@@ -138,19 +226,26 @@ public class UserInt {
                     String nev = textInput("az olvasó nevét");
                     nr3=lister.findCustomerIdByCustomerName(nev);
                     if(nr3!=-1){
-                        lister.printOneCustomerAndHisRentedsByCustomerId(nr3);
+                        lister.printListOfRentedsByOneCustomer(nr3);
                     }
                     break;
                 case 4:
-                    //TODO
+                    int nr4=-1;
+                    //könyv id keresés cím alapján
+                    if(nr4!=-1){        
+                        lister.printListOfRentsByBookId(nr4);
+                    }
                     break;
                 case 5:
                     int nr5=-1;
                     String konyv=textInput("a könyv címét");
-                    //TODO
+                    //könyv id keresés cím alapján
+                    if(nr5!=-1){
+                        lister.printListOfRentsByBookId(nr5);
+                    }
                     break;
                 case 6:
-                    lister.printdMostPopularBook();
+                    lister.printMostPopularBook();
                     break;
                 default:
                     quit=true;
@@ -201,5 +296,6 @@ public class UserInt {
         Scanner sc=new Scanner(System.in);
         return sc.nextLine();
     }
+    
     
 }
