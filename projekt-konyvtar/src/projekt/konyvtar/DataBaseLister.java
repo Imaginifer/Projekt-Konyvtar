@@ -172,7 +172,7 @@ public class DataBaseLister {
             int customerId;
             int rentalDate;
             int returnDate;
-            List<Integer> test =new ArrayList<>();
+            List<Integer> test = new ArrayList<>();
             while (getBookRentalResults.next()) {
                 customerId = getBookRentalResults.getInt("customer_id");
                 test.add(customerId);
@@ -182,11 +182,10 @@ public class DataBaseLister {
                 returnDate = getBookRentalResults.getInt("return_date");
                 System.out.println("Kölcsönzés vége: " + returnDate);
             }
-            if(test.isEmpty()){
+            if (test.isEmpty()) {
                 System.out.println("Még nem kölcsönözték ki ezt a  könyvet!");
                 return;
             }
-            
 
         } catch (SQLException e) {
             System.out.println("Hiba!" + e);
@@ -194,20 +193,21 @@ public class DataBaseLister {
     }
 
     public void printMostPopularBook() {
-        
+
         try {
-            String getUserSql = "SELECT title FROM library.book where book_id = (SELECT count(book_id) FROM rental join inventory on "
-                    + "rental.inventory_id = inventory.inventory_id order by count(book_id) desc limit 1)";
+            String getUserSql = "SELECT title FROM library.book WHERE book_id = "
+                    + "(SELECT book_id FROM library.inventory WHERE inventory_id = "
+                    + "(SELECT inventory_id FROM library.rental GROUP BY inventory_id ORDER BY COUNT(*) DESC LIMIT 1))";
             PreparedStatement getUserStmt = conn.prepareStatement(getUserSql);
 
             ResultSet getUserResults = getUserStmt.executeQuery();
-            
+
             String mostPopBook;
             if (getUserResults.next()) {
                 mostPopBook = getUserResults.getString("title");
-                System.out.println("Most popular book: " + mostPopBook);
+                System.out.println("A legsikeresebb: " + mostPopBook);
             } else {
-                System.out.println("Error!!!");
+                System.out.println("Hiba!!!");
             }
         } catch (SQLException e) {
             e.getMessage();
@@ -243,12 +243,13 @@ public class DataBaseLister {
             ResultSet getCustomerRentalResults = getCustomerRentalsStmt.executeQuery();
 
             String bookName;
-            if (getCustomerRentalResults.next()) {
-                while (getCustomerRentalResults.next()) {
-                    bookName = getCustomerRentalResults.getString("title");
-                    System.out.println("Kölcsönzött könyv neve:  " + bookName);
-                }
-            } else {
+            ArrayList<String> test = new ArrayList<>();
+            while (getCustomerRentalResults.next()) {
+                bookName = getCustomerRentalResults.getString("title");
+                test.add(bookName);
+                System.out.println("Kölcsönzött könyv neve:  " + bookName);
+            }
+            if (test.isEmpty()) {
                 System.out.println("Még nem kölcsönzött könyvet!");
                 return;
             }
