@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -211,8 +212,33 @@ public class DataBaseLister {
         }
     }
 
-    public List findListOfInventoryIdsByTitle(String title) {
+    public List<Integer> findListOfInventoryIdsByTitle(String title) {
+        List<Integer> listOfInventoryIds = new ArrayList<>();
 
+        try {
+            String getInventoryId = "SELECT * FROM library.inventory WHERE book_id IN "
+                    + "( SELECT book_id FROM library.book WHERE title = ?)";
+            PreparedStatement getInventoryIdStmt = conn.prepareStatement(getInventoryId);
+            getInventoryIdStmt.setString(1, title);
+
+            ResultSet getInventoryIdResults = getInventoryIdStmt.executeQuery();
+
+            int inventoryId;
+            if (getInventoryIdResults.next()) {
+                while (getInventoryIdResults.next()) {
+                    inventoryId = getInventoryIdResults.getInt("inventory_id");
+                    listOfInventoryIds.add(inventoryId);
+                }
+            } else {
+                System.out.println("Nincs ilyen könyv, vagy azonosító a raktárban!");
+                return listOfInventoryIds;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Hiba!" + e);
+        }
+        System.out.println("Nincs ilyen könyv, vagy azonosító a raktárban!");
+        return listOfInventoryIds;
     }
 
     public int findRentalIdByInventoryIdAndCustomerId(int inventoryId, int customerId) {
@@ -244,7 +270,7 @@ public class DataBaseLister {
         try {
             String getCustomerId = "SELECT customer_id FROM library.customer WHERE name = ?";
             PreparedStatement getCustomerIdStmt = conn.prepareStatement(getCustomerId);
-            getCustomerIdStmt.setString(1, CustomerName );
+            getCustomerIdStmt.setString(1, CustomerName);
 
             ResultSet getCustomerIdResults = getCustomerIdStmt.executeQuery();
 
