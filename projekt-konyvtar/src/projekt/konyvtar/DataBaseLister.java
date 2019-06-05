@@ -215,15 +215,36 @@ public class DataBaseLister {
 
     }
 
-    public int findRentalIdByInventoryIdAndCustomerId(int itemId, int customerId) {
+    public int findRentalIdByInventoryIdAndCustomerId(int inventoryId, int customerId) {
+        try {
+            String getRentalId = "SELECT * FROM library.rental WHERE inventory_id = ? AND customer_id = ?";
+            PreparedStatement getRentalIdStmt = conn.prepareStatement(getRentalId);
+            getRentalIdStmt.setInt(1, inventoryId);
+            getRentalIdStmt.setInt(2, customerId);
 
+            ResultSet getRentalIdResults = getRentalIdStmt.executeQuery();
+
+            int rentalId;
+            if (getRentalIdResults.next()) {
+                rentalId = getRentalIdResults.getInt("rental_id");
+                return rentalId;
+            } else {
+                System.out.println("Valamelyik azonosító nem létezik!");
+                return -1;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Hiba!" + e);
+        }
+        System.out.println("Valamelyik azonosító nem létezik!");
+        return -1;
     }
 
     public int findCustomerIdByCustomerName(String CustomerName) {
         try {
             String getCustomerId = "SELECT customer_id FROM library.customer WHERE name = ?";
             PreparedStatement getCustomerIdStmt = conn.prepareStatement(getCustomerId);
-            getCustomerIdStmt.setString(1, "%" + CustomerName + "%");
+            getCustomerIdStmt.setString(1, CustomerName );
 
             ResultSet getCustomerIdResults = getCustomerIdStmt.executeQuery();
 
