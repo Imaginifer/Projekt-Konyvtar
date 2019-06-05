@@ -49,14 +49,25 @@ public class UserInt {
         //olvasó létrehozása, keresése vagy deaktiválása
         boolean quit=false;
         do{
-            String[] ch={"Új olvasó hozzásadása","Olvasó deaktiválása"};
+            String[] ch={"Új olvasó hozzáadása","Olvasó deaktiválása", "Olvasó újraaktiválása"};
             int q=choosePath(ch);
             switch(q){
                 case 1:
-                    //TODO
+                    handler.addCustomer(textInput("az új olvasó nevét"));
                     break;
                 case 2:
-                    //TODO
+                    int nr2=-1;
+                    nr2=lister.findCustomerIdByCustomerName(textInput("a deaktiválandó olvasó nevét"));
+                    if(nr2!=-1){
+                        handler.setCustomerStatus(nr2, false);
+                    }
+                    break;
+                case 3:
+                    int nr3=-1;
+                    nr3=lister.findCustomerIdByCustomerName(textInput("az aktiválandó olvasó nevét"));
+                    if(nr3!=-1){
+                        handler.setCustomerStatus(nr3, true);
+                    }
                     break;
                 default:
                     quit=true;
@@ -80,13 +91,15 @@ public class UserInt {
                     break;
                 case 2:
                     int nr2=-1;
-                    //könyv id keresése cím alapján
-                    handler.addItem();
+                    nr2=lister.findBookId(textInput("a könyv címét"));
+                    if(nr2!=-1){
+                        handler.addItem(nr2);
+                    }
                     break;
                 case 3:
                     int nr3=-1;
-                    //könyv id keresése cím alapján
-                    handler.removeBook();
+                    nr3=lister.findBookId(textInput("a törlendő könyv címét"));
+                    handler.removeBook(nr3);
                     break;
                 case 4:
                     scrapItem();
@@ -126,8 +139,12 @@ public class UserInt {
             System.out.println("Ezeket a könyveket kölcsönözte ki:");
             lister.printOneCustomerAndHisActiveRentalsByCustomerId(readerId);
             String booktitle=textInput("a visszahozott könyv címét");
-            //kell: cím és olvasóId alapján megkapni a kölcsönzött könyv itemId-jét
-            handler.returnBook();
+            int itemId=-1;
+            itemId=lister.findBookOut(booktitle, readerId);
+            if(itemId!=-1){
+                handler.returnBook(itemId);
+            }
+            
         }
     }
     
@@ -194,7 +211,7 @@ public class UserInt {
                         System.out.println("Kérem, számot adjon meg!");
                     }
                 }while(!correct);
-                handler.rentABook(readerId, itemId, title);
+                handler.rentABook(readerId, itemId);
             }
             
         }
@@ -231,17 +248,16 @@ public class UserInt {
                     break;
                 case 4:
                     int nr4=-1;
-                    //könyv id keresés cím alapján
+                    nr4=lister.findBookId(textInput("a könyv címét"));
                     if(nr4!=-1){        
                         lister.printListOfRentsByBookId(nr4);
                     }
                     break;
                 case 5:
                     int nr5=-1;
-                    String konyv=textInput("a könyv címét");
-                    //könyv id keresés cím alapján
+                    nr5=lister.findBookId(textInput("a könyv címét"));
                     if(nr5!=-1){
-                        lister.printListOfRentsByBookId(nr5);
+                        lister.printAverageRentedTimeByBookId(nr5);
                     }
                     break;
                 case 6:
