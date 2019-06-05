@@ -123,22 +123,34 @@ public class UserInt {
             int q=choosePath(ch);
             switch(q){
                 case 1:
-                    //TODO
+                    int nr1=-1;
+                    String nom = textInput("az olvasó nevét");
+                    nr1=lister.findCustomerIdByCustomerName(nom);
+                    if(nr1!=-1){
+                        lister.printListOfRentedsByOneCustomer(nr1);
+                    }
                     break;
                 case 2:
-                    //TODO
+                    lister.printListOfCustomersAndTheirRenteds();
                     break;
                 case 3:
-                    //TODO
+                    int nr3=-1;
+                    String nev = textInput("az olvasó nevét");
+                    nr3=lister.findCustomerIdByCustomerName(nev);
+                    if(nr3!=-1){
+                        lister.printOneCustomerAndHisRentedsByCustomerId(nr3);
+                    }
                     break;
                 case 4:
                     //TODO
                     break;
                 case 5:
+                    int nr5=-1;
+                    String konyv=textInput("a könyv címét");
                     //TODO
                     break;
                 case 6:
-                    //TODO
+                    lister.printdMostPopularBook();
                     break;
                 default:
                     quit=true;
