@@ -189,6 +189,23 @@ public class DataBaseLister {
     
     public void printMostPopularBook() {
         
+        try {
+            String getUserSql = "SELECT title FROM library.book where book_id = (SELECT count(book_id) FROM rental join inventory on "
+                    + "rental.inventory_id = inventory.inventory_id order by count(book_id) desc limit 1)";
+            PreparedStatement getUserStmt = conn.prepareStatement(getUserSql);
+
+            ResultSet getUserResults = getUserStmt.executeQuery();
+            
+            String mostPopBook;
+            if (getUserResults.next()) {
+                mostPopBook = getUserResults.getString("title");
+                System.out.println("Most popular book: " + mostPopBook);
+            } else {
+                System.out.println("Error!!!");
+            }
+        } catch (SQLException e) {
+            e.getMessage();
+        }
     }
     
     public void printAverageRentedTimeByBookId(int BookId) {
@@ -312,7 +329,7 @@ public class DataBaseLister {
         System.out.println("Nincs ilyen ID/név!");
         return -1;
     }
-    
+
     public int findBookId(String name) {
         
         try {
@@ -334,7 +351,7 @@ public class DataBaseLister {
         }
         return -1;
     }
-    
+
     public int findBookOut(String title, int customerId) {
         
         try {
