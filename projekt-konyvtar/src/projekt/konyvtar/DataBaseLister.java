@@ -289,5 +289,53 @@ public class DataBaseLister {
         System.out.println("Nincs ilyen ID/név!");
         return -1;
     }
+    
+    public int findBookId(String name) {
 
+        try {
+            String getUserSql = "SELECT book_id FROM book where title = ?";
+            PreparedStatement getUserStmt = conn.prepareStatement(getUserSql);
+
+            getUserStmt.setString(1, name);
+
+            ResultSet getUserResults = getUserStmt.executeQuery();
+            int bookId;
+            if (getUserResults.next()) {
+                bookId = getUserResults.getInt("book_id");
+                return bookId;
+            } else {
+                System.out.println("No such book!");
+            }
+        } catch (SQLException e) {
+            e.getMessage();
+        }
+        return -1;
+    }
+    
+    public int findBookOut(String title, int customerId) {
+
+        try {
+            String getData = "SELECT inventory_id FROM rental where inventory_id = (SELECT inventory_id FROM inventory where book_id ="
+                    + "(SELECT book_id FROM book where title = ?)) and customer_id = ? and return_date is null";
+            PreparedStatement getDataStmt = conn.prepareStatement(getData);
+
+            getDataStmt.setString(1, title);
+            getDataStmt.setInt(2, customerId);
+
+            ResultSet getDataResults = getDataStmt.executeQuery();
+
+            int inventoryId;
+            if (getDataResults.next()) {
+                inventoryId = getDataResults.getInt("inventory_id");
+                return inventoryId;
+            } else {
+                System.out.println("Error!!!");
+                return -1;
+            }
+        } catch (SQLException e) {
+            System.out.println("Hiba!" + e);
+        }
+        System.out.println("Error!!!");
+        return -1;
+    }
 }
