@@ -21,8 +21,12 @@ public class DataBaseLister {
     String url = "jdbc:mysql://localhost:3306/library";
     Connection conn;
 
-    public DataBaseLister() throws SQLException {
-        this.conn = DriverManager.getConnection(url, "root", "");
+    public DataBaseLister() {
+        try {
+            this.conn = DriverManager.getConnection(url, "root", "");
+        } catch (SQLException e) {
+            System.out.println("Hiba!" + e);
+        }
     }
 
     public void printListOfCustomersAndTheirRenteds() {
@@ -34,16 +38,23 @@ public class DataBaseLister {
         try {
             String getCustomerName = "SELECT name FROM library.customer WHERE customer_id = ?";
             PreparedStatement getCustomerNameStmt = conn.prepareStatement(getCustomerName);
-            getCustomerNameStmt.setString(1, "%" + customerId + "%");
+            getCustomerNameStmt.setInt(1, customerId);
 
             ResultSet getCustomerNameResults = getCustomerNameStmt.executeQuery();
-            System.out.println("A keresett személy neve: " + getCustomerNameResults);
+            String customerName;
+            if (getCustomerNameResults.next()) {
+                customerName = getCustomerNameResults.getString("name");
+                System.out.println("A bérlő neve: " + customerName);
+            } else {
+                System.out.println("Nincs ilyen bérlő!");
+                return;
+            }
 
             String getActiveCustomerRentals = "SELECT * FROM book WHERE book_id IN\n"
                     + "(SELECT book_id FROM inventory WHERE inventory_id IN\n"
                     + " (SELECT inventory_id FROM library.rental WHERE customer_id = ? AND return_date = NULL))";
             PreparedStatement getActiveCustomerRentalsStmt = conn.prepareStatement(getActiveCustomerRentals);
-            getActiveCustomerRentalsStmt.setString(1, "%" + customerId + "%");
+            getActiveCustomerRentalsStmt.setInt(1, customerId);
 
             ResultSet getActiveCustomerRentalResults = getActiveCustomerRentalsStmt.executeQuery();
 
@@ -67,14 +78,21 @@ public class DataBaseLister {
         try {
             String getBookName = "SELECT title FROM library.book WHERE inventory_id = ?";
             PreparedStatement getBookNameStmt = conn.prepareStatement(getBookName);
-            getBookNameStmt.setString(1, "%" + inventoryId + "%");
+            getBookNameStmt.setInt(1, inventoryId);
 
             ResultSet getBookNameResults = getBookNameStmt.executeQuery();
-            System.out.println("A keresett könyv címe: " + getBookNameResults);
+            String bookName;
+            if (getBookNameResults.next()) {
+                bookName = getBookNameResults.getString("title");
+                System.out.println("A könyv címe: " + bookName);
+            } else {
+                System.out.println("Nincs ilyen könyv!");
+                return;
+            }
 
             String getBookRentals = "SELECT * FROM library.rental WHERE inventory_id = ?";
             PreparedStatement getBookRentalsStmt = conn.prepareStatement(getBookRentals);
-            getBookRentalsStmt.setString(1, "%" + inventoryId + "%");
+            getBookRentalsStmt.setInt(1, inventoryId);
 
             ResultSet getBookRentalResults = getBookRentalsStmt.executeQuery();
 
@@ -104,15 +122,22 @@ public class DataBaseLister {
         try {
             String getBookName = "SELECT title FROM library.book WHERE book_id = ?";
             PreparedStatement getBookNameStmt = conn.prepareStatement(getBookName);
-            getBookNameStmt.setString(1, "%" + bookId + "%");
+            getBookNameStmt.setInt(1, bookId);
 
             ResultSet getBookNameResults = getBookNameStmt.executeQuery();
-            System.out.println("A keresett könyv címe: " + getBookNameResults);
+            String bookName;
+            if (getBookNameResults.next()) {
+                bookName = getBookNameResults.getString("title");
+                System.out.println("A könyv címe: " + bookName);
+            } else {
+                System.out.println("Nincs ilyen könyv!");
+                return;
+            }
 
             String getBookRentals = "SELECT * FROM library.rental WHERE inventory_id IN "
                     + "(SELECT inventory_id FROM library.inventory WHERE book_id = ?)";
             PreparedStatement getBookRentalsStmt = conn.prepareStatement(getBookRentals);
-            getBookRentalsStmt.setString(1, "%" + bookId + "%");
+            getBookRentalsStmt.setInt(1, bookId);
 
             ResultSet getBookRentalResults = getBookRentalsStmt.executeQuery();
 
@@ -150,16 +175,23 @@ public class DataBaseLister {
         try {
             String getCustomerName = "SELECT name FROM library.customer WHERE customer_id = ?";
             PreparedStatement getCustomerNameStmt = conn.prepareStatement(getCustomerName);
-            getCustomerNameStmt.setString(1, "%" + customerId + "%");
+            getCustomerNameStmt.setInt(1, customerId);
 
             ResultSet getCustomerNameResults = getCustomerNameStmt.executeQuery();
-            System.out.println("A keresett személy neve: " + getCustomerNameResults);
+            String customerName;
+            if (getCustomerNameResults.next()) {
+                customerName = getCustomerNameResults.getString("name");
+                System.out.println("A vevő neve: " + customerName);
+            } else {
+                System.out.println("Nincs ilyen vevő!");
+                return;
+            }
 
             String getCustomerRentals = "SELECT * FROM book WHERE book_id IN\n"
                     + "(SELECT book_id FROM inventory WHERE inventory_id IN\n"
                     + " (SELECT inventory_id FROM library.rental WHERE customer_id = ?))";
             PreparedStatement getCustomerRentalsStmt = conn.prepareStatement(getCustomerRentals);
-            getCustomerRentalsStmt.setString(1, "%" + customerId + "%");
+            getCustomerRentalsStmt.setInt(1, customerId);
 
             ResultSet getCustomerRentalResults = getCustomerRentalsStmt.executeQuery();
 
@@ -167,7 +199,7 @@ public class DataBaseLister {
             if (getCustomerRentalResults.next()) {
                 while (getCustomerRentalResults.next()) {
                     bookName = getCustomerRentalResults.getString("title");
-                    System.out.println("Bérelt könyve:  " + bookName);
+                    System.out.println("Bérelt könyv neve:  " + bookName);
                 }
             } else {
                 System.out.println("Még nem bérelt könyvet!");
@@ -183,12 +215,53 @@ public class DataBaseLister {
 
     }
 
-    public int findRentalIdByInventoryIdAndCustomerId(int itemId, int customerId) {
+    public int findRentalIdByInventoryIdAndCustomerId(int inventoryId, int customerId) {
+        try {
+            String getRentalId = "SELECT * FROM library.rental WHERE inventory_id = ? AND customer_id = ?";
+            PreparedStatement getRentalIdStmt = conn.prepareStatement(getRentalId);
+            getRentalIdStmt.setInt(1, inventoryId);
+            getRentalIdStmt.setInt(2, customerId);
 
+            ResultSet getRentalIdResults = getRentalIdStmt.executeQuery();
+
+            int rentalId;
+            if (getRentalIdResults.next()) {
+                rentalId = getRentalIdResults.getInt("rental_id");
+                return rentalId;
+            } else {
+                System.out.println("Valamelyik azonosító nem létezik!");
+                return -1;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Hiba!" + e);
+        }
+        System.out.println("Valamelyik azonosító nem létezik!");
+        return -1;
     }
 
-    public int findCustomerIdByCustomerName(String name) {
+    public int findCustomerIdByCustomerName(String CustomerName) {
+        try {
+            String getCustomerId = "SELECT customer_id FROM library.customer WHERE name = ?";
+            PreparedStatement getCustomerIdStmt = conn.prepareStatement(getCustomerId);
+            getCustomerIdStmt.setString(1, CustomerName );
 
+            ResultSet getCustomerIdResults = getCustomerIdStmt.executeQuery();
+
+            int customerId;
+            if (getCustomerIdResults.next()) {
+                customerId = getCustomerIdResults.getInt("customer_id");
+                return customerId;
+            } else {
+                System.out.println("Nincs ilyen ID/név!");
+                return -1;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Hiba!" + e);
+        }
+        System.out.println("Nincs ilyen ID/név!");
+        return -1;
     }
 
 }
